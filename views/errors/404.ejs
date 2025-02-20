@@ -1,0 +1,32 @@
+<div class="error">
+  <h1>404 | Page not found</h1>
+  <button class="button btn-primary" type="button" tabindex="1">
+    <i class="material-symbols">arrow_left_alt</i>
+    <span>Click here to go back</span>
+  </button>
+</div>
+
+<script>
+  document.querySelector('.button').addEventListener('click', () => {
+    window.history.back();
+  });
+</script>
+
+
+<%- contentFor('styles') %>
+<style>
+  .error {
+    display: grid;
+    grid-template-rows: min-content min-content;
+    place-items: center;
+    align-content: center;
+    height: 100%;
+    gap: 3rem;
+
+    h1 {
+      font-size: 3rem;
+      color: #292929;
+      text-align: center;
+    }
+  }
+</style>

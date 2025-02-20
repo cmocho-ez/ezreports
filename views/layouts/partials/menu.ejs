@@ -1,0 +1,23 @@
+<nav>
+  <div class="multicolor-divider"></div>
+  <ul>
+    <li><a href="/"><i class="material-symbols">home</i><span>Home</span></a></li>
+    <li><a href="/editor"><i class="material-symbols">format_shapes</i><span>Report Editor</span></a></li>
+    <li><a href="/media"><i class="material-symbols">photo_library</i><span>Media Library</span></a></li>
+  </ul>
+</nav>
+
+<script type="module">
+  const nav = document.querySelector('nav');
+  const url = new URL(window.location.href);
+
+  if (url.pathname === '/') {
+    nav.querySelector('a[href="/"]').classList.add('active');
+  } else {
+    const active = nav.querySelector('a[href="' + url.pathname + '"]');
+
+    if (active) {
+      active.classList.add('active');
+    }
+  }
+</script>

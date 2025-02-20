@@ -3,3 +3,109 @@
   display: grid;
   gap: 1rem;
 }
+
+.upload-container {
+  display: grid;
+  grid-template-rows: min-content min-content auto;
+  padding: 1em;
+  height: 100%;
+  overflow: hidden;
+
+  .drop-area {
+    display: grid;
+    justify-content: center;
+    align-content: center;
+    border: dotted 1px var(--theme-primary);
+    border-radius: 1em;
+    background-color: var(--light-gray);
+    padding: 3rem;
+    margin-bottom: 1em;
+    cursor: pointer;
+
+    &:hover,
+    &.highlight {
+      background-color: var(--faded-white);
+    }
+  }
+
+  .file-list {
+    display: grid;
+    grid-auto-rows: min-content;
+    gap: 8px;
+    margin-top: 1em;
+    overflow: auto;
+    height: 100%;
+
+    &.empty {
+      justify-content: center;
+      align-content: center;
+    }
+
+    .file-row {
+      background-color: var(--faded-white);
+      padding: 8px;
+      border-bottom: dotted 1px var(--light-gray);
+      border-radius: 1em;
+
+      &.done {
+        transition: all 1s linear;
+        opacity: 0;
+      }
+
+      &:nth-child(odd) {
+        background-color: var(--light-gray);
+      }
+
+      .file-info {
+        display: grid;
+        grid-template-columns: min-content 300px 2fr;
+        align-items: center;
+        gap: 8px;
+        user-select: none;
+
+        .icon-preview {
+          width: 100px;
+          height: 100px;
+          padding: 8px;
+          font-size: 4em;
+          display: grid;
+          justify-content: center;
+          align-content: center;
+        }
+
+        .data {
+          line-height: 1.5em;
+
+          h1 {
+            font-weight: 700;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
+
+          h3 {
+            font-size: 0.8em;
+            color: var(--gray-light);
+          }
+        }
+      }
+
+      .options {
+        float: right;
+        margin-left: 8px;
+        height: 100%;
+        display: grid;
+        align-content: space-between;
+
+        button {
+          width: 36px;
+          height: 36px;
+
+          &:hover {
+            background-color: var(--light-gray);
+          }
+        }
+      }
+    }
+  }
+}

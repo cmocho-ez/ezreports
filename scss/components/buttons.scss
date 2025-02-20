@@ -1,0 +1,140 @@
+.button {
+  border-radius: 4px;
+  padding: 6px 12px;
+  transition: 0.25s all;
+  display: inline-grid;
+  grid-auto-flow: column;
+  gap: 4px;
+  align-items: center;
+  justify-content: center;
+  text-shadow: 0 0 1px var(--theme-text), 0 0 2px var(--theme-text);
+  cursor: pointer;
+  user-select: none;
+  min-width: 100px;
+
+  &:active {
+    translate: 2px 2px;
+  }
+
+  &:disabled {
+    opacity: 0.7;
+    cursor: default;
+  }
+
+  &.btn-primary {
+    background-color: var(--theme-primary);
+    color: var(--white);
+    border: solid 1px var(--theme-primary-border);
+
+    &:hover,
+    &:focus {
+      box-shadow: 0 0 1px 2px var(--theme-primary-border);
+    }
+  }
+
+  &.btn-secondary {
+    background-color: var(--theme-accent);
+    color: var(--white);
+    border: solid 1px var(--theme-accent-border);
+
+    &:hover,
+    &:focus {
+      box-shadow: 0 0 1px 2px var(--theme-accent-border);
+    }
+  }
+
+  &.btn-danger {
+    background-color: var(--theme-danger);
+    color: var(--white);
+    border: solid 1px var(--theme-accent-border);
+
+    &:hover,
+    &:focus {
+      box-shadow: 0 0 1px 2px var(--theme-accent-border);
+    }
+  }
+
+  &.btn-success {
+    background-color: var(--theme-success);
+    color: var(--white);
+    border: solid 1px var(--theme-primary-border);
+
+    &:hover,
+    &:focus {
+      box-shadow: 0 0 1px 2px var(--theme-primary-border);
+    }
+  }
+
+  &.btn-warning {
+    background-color: var(--theme-accent);
+    color: var(--white);
+    border: solid 1px var(--theme-accent-border);
+
+    &:hover,
+    &:focus {
+      box-shadow: 0 0 1px 2px var(--theme-accent-border);
+    }
+  }
+
+  &.btn-info {
+    background-color: var(--theme-info);
+    color: var(--white);
+    border: solid 1px var(--theme-primary-border);
+
+    &:hover,
+    &:focus {
+      box-shadow: 0 0 1px 2px var(--theme-primary-border);
+    }
+  }
+
+  &.btn-normal {
+    background-color: var(--charcoal);
+    color: var(--white);
+    border: solid 1px var(--darkest-gray);
+
+    &:hover,
+    &:focus {
+      box-shadow: 0 0 1px 2px var(--darkest-gray);
+    }
+  }
+
+  &.btn-icon {
+    background: none;
+    border: none;
+    width: 32px;
+    height: 32px;
+    margin: 0;
+    line-height: 0;
+    font-weight: 400;
+    gap: unset;
+    text-shadow: none;
+    min-width: unset;
+
+    i {
+      color: currentColor;
+    }
+
+    &:hover,
+    &:focus {
+      background-color: var(--light-gray);
+
+      i {
+        color: var(--theme-blue);
+      }
+    }
+  }
+
+  &.icon {
+    min-width: unset;
+    padding: 6px;
+  }
+
+  &.small {
+    padding: 4px;
+    font-size: 0.75rem;
+
+    i {
+      font-size: 1rem;
+    }
+  }
+}

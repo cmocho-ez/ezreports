@@ -1,0 +1,174 @@
+@use "../material_symbols";
+@use "buttons";
+@use "../formelements";
+
+@use "../mixins/scrollbar" as *;
+
+.ez-table {
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+
+  &.minimalistic {
+    td {
+      padding: 0.5rem 0;
+      border-bottom: 1px solid var(--light-gray);
+
+      &.numbers {
+        width: 5%;
+        text-align: right;
+      }
+
+      &.align-right,
+      &.align-left,
+      &.align-center {
+        display: grid;
+        text-align: center;
+      }
+
+      &.align-right {
+        justify-content: end;
+      }
+
+      &.align-center {
+        justify-content: center;
+      }
+
+      &.align-left {
+        justify-content: start;
+      }
+    }
+  }
+
+  &.full {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-rows: min-content auto min-content;
+
+    .toolbar {
+      display: grid;
+      grid-auto-flow: column;
+      justify-content: space-between;
+      align-items: center;
+
+      overflow: hidden;
+      padding: 0.5rem;
+      background-color: var(--text-gray);
+      border-radius: 6px 6px 0 0;
+
+      .table-options {
+        display: grid;
+        grid-auto-flow: column;
+        gap: 8px;
+        align-items: center;
+      }
+    }
+
+    .main-table {
+      overflow: auto;
+      display: grid;
+      align-content: start;
+      background-color: var(--light-gray);
+      border: solid 1px var(--gray-light);
+      @include scrollbar();
+
+      table {
+        width: 100%;
+        height: 100%;
+        align-items: start;
+
+        thead {
+          position: sticky;
+          top: 0;
+
+          th {
+            padding: 0.5rem;
+            background-color: var(--darkest-gray);
+            color: var(--light-gray);
+
+            &.sortable {
+              cursor: pointer;
+
+              &::after {
+                opacity: 0.3;
+                content: "▼";
+                margin-left: 0.5rem;
+              }
+            }
+
+            &.sorted-asc::after {
+              opacity: 1;
+              content: "▲";
+            }
+
+            &.sorted-desc::after {
+              opacity: 1;
+              content: "▼";
+            }
+          }
+        }
+
+        tbody {
+          tr {
+            td {
+              padding: 0.25rem;
+
+              &.align-right,
+              &.align-left,
+              &.align-center {
+                display: grid;
+              }
+
+              &.align-right {
+                justify-content: end;
+              }
+
+              &.align-center {
+                justify-content: center;
+              }
+
+              &.align-left {
+                justify-content: start;
+              }
+            }
+
+            &:nth-child(odd) {
+              background-color: var(--gray-light);
+            }
+
+            &:hover {
+              background-color: var(--light-yellow);
+            }
+          }
+        }
+      }
+    }
+
+    .footer {
+      display: grid;
+      grid-auto-flow: column;
+      overflow: hidden;
+      padding: 0.5rem;
+      background-color: var(--text-gray);
+      border-radius: 0 0 6px 6px;
+
+      .pagination-controls {
+        display: grid;
+        grid-auto-flow: column;
+        justify-content: center;
+        align-items: center;
+        align-content: center;
+        column-gap: 8px;
+      }
+
+      .records-info {
+        display: grid;
+        grid-auto-flow: column;
+        justify-content: end;
+        align-items: center;
+        align-content: center;
+      }
+    }
+  }
+}

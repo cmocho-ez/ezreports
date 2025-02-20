@@ -1,0 +1,168 @@
+@use "reset";
+@use "typography";
+@use "palette";
+@use "material_symbols";
+@use "./components/buttons";
+
+@use "./mixins/scrollbar" as *;
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-weight: normal;
+  font-size: 1em;
+  outline: none;
+}
+
+:not(:defined) {
+  display: none;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  background-color: var(--theme-background);
+  color: var(--theme-text);
+}
+
+ez-dialog {
+  [slot="body"] {
+    display: grid;
+    gap: 1rem;
+  }
+
+  [slot="buttons"] {
+    display: grid;
+    grid-auto-flow: column;
+    gap: 8px;
+    justify-content: end;
+  }
+}
+
+#app {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-rows: min-content min-content auto min-content;
+
+  hr {
+    display: block;
+    width: 100%;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    margin-bottom: 2px;
+    box-shadow: 0 1px 0 1px white;
+  }
+
+  b {
+    font-weight: 700;
+  }
+
+  .multicolor-divider {
+    height: 3px;
+    width: 100%;
+    background-image: var(--gradient-right);
+  }
+
+  i.material-symbols {
+    width: 24px;
+    height: 24px;
+  }
+
+  header {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    background-color: var(--light-gray);
+    padding: 0.6rem;
+    align-items: center;
+    min-height: 71px;
+
+    ez-applogo {
+      width: 220px;
+    }
+
+    ez-userinfo {
+      justify-self: end;
+    }
+  }
+
+  nav {
+    display: grid;
+    grid-template-rows: min-content auto;
+    background-color: var(--theme-primary-border);
+    color: var(--white);
+
+    ul {
+      display: grid;
+      grid-auto-flow: column;
+      justify-content: start;
+
+      li {
+        a {
+          display: grid;
+          grid-template-columns: min-content auto;
+          gap: 4px;
+          align-items: center;
+          padding: 8px 16px;
+          color: inherit;
+          text-decoration: none;
+          transition: background-color 0.25s ease-in-out;
+
+          span {
+            height: 24px;
+            padding-top: 5px;
+          }
+
+          &:hover {
+            background-color: var(--darkest-gray);
+          }
+
+          &.active {
+            background-color: var(--theme-primary);
+          }
+        }
+      }
+    }
+  }
+
+  main {
+    padding: 1rem;
+    overflow: auto;
+    @include scrollbar();
+  }
+
+  footer {
+    min-height: 46px;
+    padding: 8px;
+    background-color: var(--darkest-gray);
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    align-items: center;
+    color: var(--white);
+
+    p:nth-child(1) {
+      justify-self: start;
+    }
+    p:nth-child(2) {
+      justify-self: center;
+    }
+
+    ez-companylogo {
+      justify-self: end;
+      opacity: 0.65;
+      height: 30px;
+      cursor: pointer;
+      transition: opacity 0.25s ease-in-out;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+}

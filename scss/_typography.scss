@@ -1,0 +1,45 @@
+@import url("https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&family=Fira+Code:wght@300..700&family=Sedan:ital@0;1&display=swap");
+
+$family-serif: "Sedan", Georgia, "Times New Roman", Times, serif;
+$family-sans-serif: "Exo 2", -apple-system, "Segoe UI", Roboto, Ubuntu,
+  "Helvetica Neue", sans-serif;
+$family-mono: "Fira Code", Courier, monospace;
+
+body,
+button,
+input,
+select,
+textarea {
+  font-family: $family-sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 1em;
+  line-height: normal;
+  letter-spacing: normal;
+}
+
+h1 {
+  font-size: 2.3rem;
+  font-weight: 700;
+}
+
+h2 {
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+h4 {
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+code,
+pre {
+  font-size: 0.85rem;
+  font-family: $family-mono;
+}

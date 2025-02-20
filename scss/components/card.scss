@@ -1,0 +1,64 @@
+@use "../components/buttons.scss";
+@use "../material_symbols.scss";
+
+.ez-card {
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+  box-shadow: 0 0 6px 1px rgba(0, 0, 0, 0.25);
+  padding: 4px;
+  display: grid;
+  grid-template-rows: min-content min-content auto;
+  overflow: hidden;
+  height: 100%;
+
+  &.fullscreen {
+    height: calc(100vh - 160px - 2rem);
+  }
+
+  & hr {
+    display: block;
+    width: 100%;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    margin-bottom: 2px;
+    box-shadow: 0 1px 0 1px white;
+  }
+
+  & header {
+    padding: 0.5rem;
+    font-weight: bold;
+    font-size: 1.2rem;
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  & main {
+    padding: 1rem;
+    overflow-y: auto;
+  }
+
+  & .toolbar {
+    display: grid;
+    grid-auto-flow: column;
+    gap: 2px;
+    justify-content: start;
+    align-items: center;
+    align-content: center;
+
+    button {
+      color: var(--theme-inverted);
+    }
+
+    .divider {
+      width: 0;
+      height: 16px;
+      margin-left: 4px;
+      margin-right: 4px;
+      border-left: solid 1px #8d8d8d;
+      border-right: solid 1px #cecece;
+    }
+  }
+}

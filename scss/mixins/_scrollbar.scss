@@ -1,0 +1,27 @@
+@mixin scrollbar() {
+  --sb-size: 6px;
+  --sb-radius: 3px;
+
+  zoom: 1;
+
+  &::-webkit-scrollbar {
+    width: var(--sb-size);
+  }
+
+  &::-webkit-scrollbar-track {
+    background: var(--default-gray);
+    border-radius: var(--sb-radius);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--theme-highlight);
+    border-radius: var(--sb-radius);
+  }
+
+  @supports not selector(::-webkit-scrollbar) {
+    & {
+      scrollbar-width: var(--sb-size);
+      scrollbar-color: var(--theme-highlight);
+    }
+  }
+}

@@ -1,0 +1,54 @@
+@mixin form-element() {
+  outline: none;
+  padding: 8px;
+  border: none;
+  border-bottom: 1px solid var(--theme-primary-border);
+  border-radius: 4px;
+  transition: 0.5s border, 0.5s box-shadow, 0.5s background-color;
+  background-color: var(--theme-background);
+}
+
+.form-element {
+  @include form-element();
+}
+
+.form-group {
+  display: grid;
+  align-items: start;
+  align-content: start;
+  gap: 3px;
+
+  input[type="text"],
+  input[type="number"],
+  input[type="email"],
+  input[type="date"],
+  input[type="password"],
+  input[type="tel"],
+  textarea,
+  select {
+    @include form-element();
+
+    &:focus {
+      box-shadow: 0 0 1px 2px var(--theme-primary-border);
+    }
+  }
+
+  ez-switch {
+    padding: 7px 0;
+  }
+
+  input[type="color"] {
+    margin-bottom: 9px;
+  }
+}
+
+.checkbox {
+  display: grid;
+  grid-auto-flow: row;
+  gap: 3px;
+
+  input[type="checkbox"],
+  input[type="radio"] {
+    margin: 6px 0 7px 0;
+  }
+}

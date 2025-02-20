@@ -1,0 +1,22 @@
+<div class="error">
+  <h1>429 | Too Many Requests</h1>
+  <p><%= error.message %></p>
+</div>
+
+<%- contentFor('styles') %>
+<style>
+  .error {
+    display: grid;
+    grid-template-rows: min-content min-content min-content;
+    place-items: center;
+    align-content: center;
+    height: 100%;
+    gap: 3rem;
+
+    h1 {
+      font-size: 3rem;
+      color: #292929;
+      text-align: center;
+    }
+  }
+</style>

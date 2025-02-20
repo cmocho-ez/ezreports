@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en-gb">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <%- include('partials/meta.ejs') %>
+
+  <link rel="stylesheet" href="/styles/main.css">
+  <script type="module" src="/scripts/main.js"></script>
+
+  <!-- Styles -->
+  <%- defineContent('styles') %>
+  <!-- /Styles -->
+
+  <!-- Scripts -->
+  <%- defineContent('scripts') %>
+  <!-- /Scripts -->
+
+  <title>ezInvoice 4</title>
+</head>
+
+<body>
+  <div id="app">
+    <%- include('partials/header.ejs') %>
+    <%- include('partials/menu.ejs') %>
+
+    <%-body%>
+
+    <%- include('partials/footer.ejs') %>
+  </div>
+</body>
+
+</html>

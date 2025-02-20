@@ -1,0 +1,7 @@
+.cards {
+  height: 100%;
+  display: grid;
+  grid-template-areas: "fav recent" "all all";
+  grid-template-rows: 1fr 2fr;
+  gap: 1rem;
+}

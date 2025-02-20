@@ -1,0 +1,59 @@
+<main>
+  <section class="forms">
+    <ez-card header="My user profile">
+      <form id="tenantForm" class="form">
+        <div class="form-group">
+          <label for="auth0_uid">Auth0 UID:</label>
+          <input type="text" id="auth0_uid" name="auth0_uid" required />
+        </div>
+
+        <div class="form-group">
+          <label for="name">Name:</label>
+          <input type="text" id="name" name="name" required />
+        </div>
+
+        <div class="form-group">
+          <label for="description">Description:</label>
+          <textarea id="description" name="description"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email:</label>
+          <input type="email" id="email" name="email" required />
+        </div>
+
+        <div class="form-group">
+          <label for="created">Created Date:</label>
+          <input type="date" id="created" name="created" value="<%= (new Date()).toISOString().substring(0, 10) %>" required />
+        </div>
+
+        <div class="form-group">
+          <label for="company_name">Company Name:</label>
+          <input type="text" id="company_name" name="company_name" required />
+        </div>
+
+        <div class="form-group">
+          <label for="company_address">Company Address:</label>
+          <input type="text" id="company_address" name="company_address" required />
+        </div>
+
+        <div class="form-group">
+          <label for="vat_no">VAT No:</label>
+          <input type="text" id="vat_no" name="vat_no" />
+        </div>
+
+      </form>
+
+      <div class="buttons">
+        <button class="button btn-primary" name="btnSave">Gravar</button>
+        <button class="button btn-normal" name="btnCancel">Cancelar</button>
+      </div>
+    </ez-card>
+  </section>
+</main>
+
+<%- contentFor('scripts') %>
+<script type="module" src="/scripts/tenant.js" defer></script>
+
+<%- contentFor('styles') %>
+<link rel="stylesheet" href="/styles/views/tenant.css" />

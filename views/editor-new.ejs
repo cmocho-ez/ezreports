@@ -1,0 +1,46 @@
+<main>
+  <section class="cards">
+    <ez-card type="fullscreen" header="Creating new report">
+      <section class="report-new">
+        <section class="metadata report-form">
+          <div class="form-group">
+            <label>Original file path</label>
+            <input type="text" name="filepath" readonly disabled />
+          </div>
+          <div class="form-group">
+            <label>Report name</label>
+            <input type="text" name="report_name" />
+          </div>
+          <div class="form-group">
+            <label>Created on</label>
+            <input type="date" name="created_on" value="<%= (new Date()).toISOString().substr(0,10) %>" readonly disabled />
+          </div>
+          <div class="form-group">
+            <label>Last edited on</label>
+            <input type="date" name="last_edited_on" readonly disabled />
+          </div>
+          <div class="form-group">
+            <label>Author</label>
+            <input type="text" name="author" />
+          </div>
+          <div class="form-group">
+            <label>Description</label>
+            <textarea name="description" rows="5" style="resize: none"></textarea>
+          </div>
+
+        </section>
+        <section class="document-container" data-type="editor">
+          <div class="document A4" data-type="document"></div>
+          <canvas class="A4"></canvas>
+        </section>
+      </section>
+    </ez-card>
+  </section>
+</main>
+
+
+<%- contentFor('scripts') %>
+<script type="module" src="/scripts/editor-new.js" defer></script>
+
+<%- contentFor('styles') %>
+<link rel="stylesheet" href="/styles/views/editor.css" />

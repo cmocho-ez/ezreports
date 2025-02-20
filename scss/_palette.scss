@@ -1,0 +1,134 @@
+:root,
+:host {
+  --gray-light: #acb5be;
+  --light-gray: #eeeeee;
+  --light-gray2: #eff4f5;
+  --light-gray3: #f5f8f9;
+  --lighter-gray: #dddddd;
+  --charcoal: #555555;
+  --darkest-gray: #333333;
+  --darkest-gray2: #1b1a1f;
+  --almost-black: #161616;
+  --hover-black: #2222227e;
+  --vue-green: #4ae387;
+  --vue-light-green: #dbf9e8;
+  --light-green: #c8f9c5;
+  --lighter-green: #d6ffd3;
+  --light-blue: #dcf1ff;
+  --light-yellow: #fff1c8;
+  --light-pink: #ffcece;
+  --vue-darkest-blue: #34495e;
+  --vue-turquoise: #dbf9e7;
+  --white: #ffffff;
+  --light-gray2: #eff4f5;
+  --dark-gray: #282828;
+  --default-gray: #8396a5;
+  --dark-blue: #0e4ac4;
+  --text-gray: #b4b4b4;
+  --markdown-code: #d7234e;
+  --prism-background: #f4f8fa;
+  --separator-color: #e6e9ec;
+
+  --theme-red: #b32121;
+  --theme-orange: #ffa600;
+  --theme-blue: #2f7ebe;
+  --theme-green: #2e972a;
+  --theme-blue-dark: #305475;
+  --theme-violet: #b36db6;
+  --theme-pale: #d9d9d9;
+
+  --theme-danger: var(--theme-red);
+  --theme-warning: var(--theme-orange);
+  --theme-info: var(--theme-blue);
+  --theme-success: var(--theme-green);
+
+  --theme-primary: #2c82e0ff;
+  --theme-primary-border: #496788ff;
+  --theme-accent: #dd6e42ff;
+  --theme-accent-border: #8a533eff;
+  --theme-highlight: #e8dab2ff;
+  --theme-background: #eaeaeaff;
+  --theme-inverted: #5c415dff;
+  --theme-text: #292929ff;
+
+  /* SCSS Gradient */
+  --gradient-top: linear-gradient(
+    0deg,
+    #2c82e0ff,
+    #dd6e42ff,
+    #e8dab2ff,
+    #eaeaeaff,
+    #5c415dff
+  );
+
+  --gradient-right: linear-gradient(
+    90deg,
+    #2c82e0ff,
+    #dd6e42ff,
+    #e8dab2ff,
+    #eaeaeaff,
+    #5c415dff
+  );
+
+  --gradient-bottom: linear-gradient(
+    180deg,
+    #2c82e0ff,
+    #dd6e42ff,
+    #e8dab2ff,
+    #eaeaeaff,
+    #5c415dff
+  );
+
+  --gradient-left: linear-gradient(
+    270deg,
+    #2c82e0ff,
+    #dd6e42ff,
+    #e8dab2ff,
+    #eaeaeaff,
+    #5c415dff
+  );
+
+  --gradient-top-right: linear-gradient(
+    45deg,
+    #2c82e0ff,
+    #dd6e42ff,
+    #e8dab2ff,
+    #eaeaeaff,
+    #5c415dff
+  );
+
+  --gradient-bottom-right: linear-gradient(
+    135deg,
+    #2c82e0ff,
+    #dd6e42ff,
+    #e8dab2ff,
+    #eaeaeaff,
+    #5c415dff
+  );
+
+  --gradient-top-left: linear-gradient(
+    225deg,
+    #2c82e0ff,
+    #dd6e42ff,
+    #e8dab2ff,
+    #eaeaeaff,
+    #5c415dff
+  );
+
+  --gradient-bottom-left: linear-gradient(
+    315deg,
+    #2c82e0ff,
+    #dd6e42ff,
+    #e8dab2ff,
+    #eaeaeaff,
+    #5c415dff
+  );
+
+  --gradient-radial: radial-gradient(
+    #2c82e0ff,
+    #dd6e42ff,
+    #e8dab2ff,
+    #eaeaeaff,
+    #5c415dff
+  );
+}

@@ -1,0 +1,73 @@
+@use "../formelements";
+@use "../mixins/scrollbar" as *;
+
+.cards {
+  height: 100%;
+  display: grid;
+  gap: 1rem;
+}
+
+.report-list {
+  display: grid;
+  gap: 1rem;
+  justify-content: start;
+  align-items: start;
+  align-content: start;
+}
+
+.report-form {
+  display: grid;
+  gap: 1rem;
+  align-items: start;
+  align-content: start;
+}
+
+.report-new {
+  height: 100%;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr 3fr;
+
+  .document-container {
+    position: relative;
+    border: solid 1px var(--almost-black);
+    background-color: var(--vue-darkest-blue);
+    padding: 1cm;
+    overflow: auto;
+    height: 100%;
+    @include scrollbar();
+
+    .A4 {
+      width: 210mm;
+      height: 297mm;
+
+      &.landscape {
+        width: 297mm;
+        height: 210mm;
+      }
+    }
+
+    .A3 {
+      width: 297mm;
+      height: 420mm;
+
+      &.landscape {
+        width: 420mm;
+        height: 297mm;
+      }
+    }
+
+    .document {
+      position: absolute;
+      border: solid 1px black;
+      background-color: white;
+      box-shadow: 0 0 6px 1px rgba(0, 0, 0, 0.4);
+      z-index: 1;
+    }
+
+    canvas {
+      position: absolute;
+      z-index: 2;
+    }
+  }
+}

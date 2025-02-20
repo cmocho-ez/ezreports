@@ -1,0 +1,10 @@
+@use "buttons";
+@use "../formelements";
+@use "../material_symbols";
+
+.ez-date-selector {
+  width: 100%;
+  display: grid;
+  gap: 6px;
+  grid-template-columns: min-content 7fr 3fr min-content;
+}

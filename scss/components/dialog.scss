@@ -10,7 +10,6 @@
   border: solid 1px var(--theme-primary-border);
   overflow: hidden;
   width: clamp(25vw, 300px, 80vw);
-  height: min(250px, 20vw);
   display: grid;
   grid-template-rows: min-content auto min-content;
 

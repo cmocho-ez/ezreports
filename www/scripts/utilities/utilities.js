@@ -201,26 +201,26 @@ export const showDialog = ({
 
   document.body.appendChild(dlg);
 
+  const bodySlot = dlg.querySelector("[slot=body]");
+  const footerSlot = dlg.querySelector("[slot=buttons]");
+
   dlg.setAttribute("type", type);
   dlg.setAttribute("title", title);
   if (icon) dlg.setAttribute("icon", icon);
 
   if (content) {
-    content.setAttribute("slot", "body");
-    dlg.appendChild(content);
+    bodySlot.appendChild(content);
   }
 
   if (message) {
     const messageElement = document.createElement("p");
     messageElement.innerHTML = message;
-    messageElement.setAttribute("slot", "body");
-    dlg.appendChild(messageElement);
+    bodySlot.appendChild(messageElement);
   }
 
   if (buttons.length > 0) {
     buttons.forEach((btn) => {
-      btn.setAttribute("slot", "buttons");
-      dlg.appendChild(btn);
+      footerSlot.appendChild(btn);
     });
   }
 
@@ -229,6 +229,13 @@ export const showDialog = ({
 
   dlg.addEventListener("close", () => {
     dlg.remove();
+  });
+
+  dlg.addEventListener("click", (e) => {
+    const button = e.target.closest("button");
+    if (!button) return;
+
+    dlg.dispatchEvent(new CustomEvent("dialogbuttonclick", { detail: { button } }));
   });
 
   return dlg;

@@ -1,0 +1,22 @@
+<main>
+  <section class="cards">
+    <ez-card header="Media Library">
+      <% if (mediaLib.length === 0) { %>
+      <p>No media uploaded yet.</p>
+      <% } %>
+      <% mediaLib.forEach(thumb => { %>
+      <div class="thumbnail" data-author="<%= thumb.author %>" data-description="<%= thumb.description %>" data-link="/media/<%= thumb.path %>">
+        <span class="title"><%= thumb.title %></span>
+        <span class="date">Created on <%= thumb.date %></span>
+      </div>
+      <% }) %>
+    </ez-card>
+  </section>
+</main>
+
+
+<%- contentFor('scripts') %>
+<script type="module" src="/scripts/media.js" defer></script>
+
+<%- contentFor('styles') %>
+<link rel="stylesheet" href="/styles/views/media.css" />

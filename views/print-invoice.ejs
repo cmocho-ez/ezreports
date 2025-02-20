@@ -1,0 +1,127 @@
+<div class="invoice-container">
+  <div class="printable-page">
+    <% if (invoice.status==='C' ) { %>
+      <div class="cancelled"></div>
+      <% } %>
+        <header>
+          <ez-logo></ez-logo>
+          <section>
+            <h1>
+              Invoice #<span name="invoice_no">
+                <%= invoice.invoice_no %>
+              </span>
+            </h1>
+            <h3>
+              Date: <%= invoice.created %> &nbsp;&bull;&nbsp; Due date: <%= invoice.due_date %>
+            </h3>
+          </section>
+        </header>
+        <hr class="blue" />
+        <section class="info">
+          <div class="from">
+            <p><strong>From</strong></p>
+            <p>
+              <%= company.company_name %>
+            </p>
+            <% for (let line of company.address) { %>
+              <p>
+                <%= line %>
+              </p>
+              <% } %>
+          </div>
+          <div class="to">
+            <p><strong>To</strong></p>
+            <p>
+              <%= customer.name %>
+            </p>
+            <% for (let line of customer.address) { %>
+              <p>
+                <%= line %>
+              </p>
+              <% } %>
+          </div>
+        </section>
+        <hr class="blue" />
+        <table>
+          <thead>
+            <tr>
+              <th>DESCRIPTION</th>
+              <th>QTY</th>
+              <th>PRICE</th>
+              <th>VAT</th>
+              <th>DISC.</th>
+              <th>SUBTOTAL</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% for (let line of invoice.lines) { %>
+              <tr>
+                <td>
+                  <%= line.description %>
+                </td>
+                <td>
+                  <%= line.quantity %>
+                </td>
+                <td>
+                  <%= line.price %>
+                </td>
+                <td>
+                  <%= line.vat %> %
+                </td>
+                <td>
+                  <%= line.discount %>
+                </td>
+                <td>
+                  <%= line.subtotal %>
+                </td>
+              </tr>
+              <% } %>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="6" style="text-align: right">
+                TOTAL: <%= invoice.total %>
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+        <hr class="transparent" />
+        <section class="details">
+          <h2>DETAILING OF DESCRIPTION</h2>
+          <div>
+            <% for (let line of invoice.details) { %>
+              <p>
+                <%= line %>
+              </p>
+              <% } %>
+          </div>
+        </section>
+        <footer>
+          <% if (!invoice.vat) { %>
+            <p>
+              * VAT is not applicable for this invoice because it's being paid by the
+              service provider in its country of origin.
+            </p>
+            <% } %>
+        </footer>
+  </div>
+</div>
+<sl-button class="cta-print" variant="danger" size="large">Print</sl-button>
+
+<%- contentFor('scripts') %>
+  <script type="module" src="/scripts/print-invoice.js"></script>
+
+  <%- contentFor('styles') %>
+    <link rel="stylesheet" href="/css/print-invoice.css" />
+    <style>
+      .invoice-container {
+        overflow: auto;
+        height: 100%;
+        padding: 10mm;
+        background-color: #656565;
+      }
+
+      .printable-page {
+        box-shadow: rgba(0, 0, 0, 0.33) 6px 6px 6px 0px;
+      }
+    </style>

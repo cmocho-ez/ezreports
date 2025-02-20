@@ -1,0 +1,44 @@
+<main>
+  <section class="cards">
+    <ez-card header="Favorite reports" style="grid-area: fav" data-type="fav">
+      <% if (favoriteReports.length === 0) { %>
+      <p>No favorite reports yet</p>
+      <% } %>
+      <% favoriteReports.forEach(report => { %>
+      <div class="report-rep" data-author="<%= report.author %>" data-description="<%= report.description %>" data-link="/reports/<%= report.id %>">
+        <span class="title"><%= report.title %></span>
+        <span class="date">Last edited on <%= report.date %></span>
+      </div>
+      <% }) %>
+    </ez-card>
+    <ez-card header="Most recent reports" style="grid-area: recent" data-type="recent">
+      <% if (recentReports.length === 0) { %>
+      <p>No recent reports yet</p>
+      <% } %>
+      <% recentReports.forEach(report => { %>
+      <div class="report-rep" data-author="<%= report.author %>" data-description="<%= report.description %>" data-link="/reports/<%= report.id %>">
+        <span class="title"><%= report.title %></span>
+        <span class="date">Last edited on<%= report.date %></span>
+      </div>
+      <% }) %>
+    </ez-card>
+    <ez-card header="All reports" style="grid-area: all" data-type="all">
+      <% if (allReports.length === 0) { %>
+      <p>No reports yet</p>
+      <% } %>
+      <% allReports.forEach(report => { %>
+      <div class="report-rep" data-author="<%= report.author %>" data-description="<%= report.description %>" data-link="/reports/<%= report.id %>">
+        <span class="title"><%= report.title %></span>
+        <span class="date">Last edited on <%= report.date %></span>
+      </div>
+      <% }) %>
+    </ez-card>
+  </section>
+</main>
+
+
+<%- contentFor('scripts') %>
+<script type="module" src="/scripts/home.js" defer></script>
+
+<%- contentFor('styles') %>
+<link rel="stylesheet" href="/styles/views/home.css" />

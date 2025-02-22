@@ -1,7 +1,22 @@
+@use "../components/buttons";
+@use "../formelements";
+@use "../mixins/scrollbar" as *;
+
 .cards {
   height: 100%;
   display: grid;
   gap: 1rem;
+}
+
+.preview-box {
+  max-width: 1200px;
+  max-height: 700px;
+  overflow: auto;
+  @include scrollbar();
+  background-color: var(--charcoal);
+  display: grid;
+  place-items: center;
+  padding: 1em;
 }
 
 .upload-container {
@@ -30,81 +45,99 @@
 
   .file-list {
     display: grid;
-    grid-auto-rows: min-content;
-    gap: 8px;
-    margin-top: 1em;
+    grid-template-rows: min-content;
+    margin-top: 1rem;
     overflow: auto;
-    height: 100%;
+    height: 300px;
+    align-content: start;
 
-    &.empty {
-      justify-content: center;
-      align-content: center;
-    }
+    @include scrollbar();
 
     .file-row {
-      background-color: var(--faded-white);
-      padding: 8px;
-      border-bottom: dotted 1px var(--light-gray);
-      border-radius: 1em;
-
-      &.done {
-        transition: all 1s linear;
-        opacity: 0;
-      }
+      position: relative;
+      display: grid;
+      grid-template-columns: min-content 1fr min-content 150px;
+      padding: 10px;
+      column-gap: 12px;
+      align-items: center;
+      background-color: var(--light-gray2);
+      overflow: hidden;
+      min-height: 84px;
 
       &:nth-child(odd) {
-        background-color: var(--light-gray);
+        background-color: white;
+      }
+
+      &.success {
+        background-color: var(--light-green);
+      }
+
+      &.error {
+        background-color: var(--light-red);
+        text-align: center;
+
+        .ribbon {
+          position: absolute;
+          right: -30px;
+          transform: rotate(45deg);
+          box-shadow: 0 0 3px 1px rgba(0, 0, 0, 0.5);
+          z-index: 1;
+          background-color: var(--theme-red);
+          color: #fff;
+          line-height: 0;
+          font-size: 1.75rem;
+          font-weight: 100;
+          width: 140px;
+          height: 15px;
+          cursor: pointer;
+
+          i {
+            font-size: inherit;
+            font-weight: inherit;
+            text-shadow: 0 0 4px rgba(0, 0, 0, 1);
+            margin-top: -0.4rem;
+          }
+        }
+      }
+
+      .file-image {
+        width: 100px;
+        height: 64px;
+        border-radius: 8px;
+        background: var(--gray-light) center / contain no-repeat;
       }
 
       .file-info {
         display: grid;
-        grid-template-columns: min-content 300px 2fr;
+        grid-template-columns: auto min-content min-content;
         align-items: center;
         gap: 8px;
         user-select: none;
 
-        .icon-preview {
-          width: 100px;
-          height: 100px;
-          padding: 8px;
-          font-size: 4em;
-          display: grid;
-          justify-content: center;
-          align-content: center;
+        .file-name {
+          font-weight: 700;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
         }
 
-        .data {
-          line-height: 1.5em;
-
-          h1 {
-            font-weight: 700;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-          }
-
-          h3 {
-            font-size: 0.8em;
-            color: var(--gray-light);
-          }
+        .file-size,
+        .file-type {
+          font-size: 0.8em;
+          color: var(--gray-light);
         }
       }
 
-      .options {
-        float: right;
-        margin-left: 8px;
-        height: 100%;
+      .file-actions {
         display: grid;
-        align-content: space-between;
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+        align-content: center;
+        gap: 2px;
+      }
 
-        button {
-          width: 36px;
-          height: 36px;
-
-          &:hover {
-            background-color: var(--light-gray);
-          }
-        }
+      meter {
+        width: 100%;
+        height: 2em;
       }
     }
   }

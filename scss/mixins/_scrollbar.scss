@@ -1,11 +1,10 @@
 @mixin scrollbar() {
-  --sb-size: 6px;
-  --sb-radius: 3px;
-
-  zoom: 1;
+  --sb-size: 12px;
+  --sb-radius: 6px;
 
   &::-webkit-scrollbar {
     width: var(--sb-size);
+    height: var(--sb-size);
   }
 
   &::-webkit-scrollbar-track {

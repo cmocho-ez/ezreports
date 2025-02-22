@@ -1,11 +1,22 @@
-import { showAlert, showDialog } from "./utilities/utilities.js";
+import { showAlert, showDialog, newButton } from "./utilities/utilities.js";
 
 // Toolbar
-function uploadMedia() {
+function uploadMedia(button) {
+  button.disabled = true;
+
   const dlg = showDialog({
     icon: "upload",
     title: "Upload media",
     content: document.querySelector("#upload").content.cloneNode(true),
+    buttons: [
+      newButton({ label: "Clear list", icon: "clear_all", name: "btnClearAll", type: "danger" }),
+      newButton({ label: "Upload all", icon: "upload", name: "btnUploadAll", type: "primary" }),
+      newButton({ label: "Cancel", icon: "cancel", name: "btnCancel", type: "normal" }),
+    ],
+  });
+
+  dlg.addEventListener("close", () => {
+    button.disabled = false;
   });
 
   const dropArea = dlg.querySelector(".drop-area");
@@ -13,67 +24,37 @@ function uploadMedia() {
 
   let fileList = [];
 
-  // Previewing files
-  function previewFiles(files) {
-    console.log(files);
-    return;
+  // Listing files
+  function listFiles(files) {
+    files.forEach((file) => {
+      const html = `
+        <div class="file-row">
+          <div class="file-image" style="background-image: url(${URL.createObjectURL(file)})"></div>
+          <div class="file-info">
+            <span class="file-name">${file.name}</span>
+            <span class="file-size">${file.size}&nbsp;bytes</span>
+            <span class="file-type">${file.type}</span>
+          </div>
+          <div class="file-actions">
+            <button class="button btn-icon" name="btnFileProps" title="Properties..."><i class="material-symbols">more_horiz</i></button>
+            <button class="button btn-icon" name="btnUploadFile" title="Upload"><i class="material-symbols">upload</i></button>
+            <button class="button btn-icon" name="btnCancelFile" title="Cancel"><i class="material-symbols">delete</i></button>
+            <button class="button btn-icon" name="btnPreviewFile" title="Enlarge"><i class="material-symbols">fullscreen</i></button>
+          </div>
+          <meter value="0" max="100" optimal="100"></meter>
+        </div>
+      `;
 
-    files.forEach((f) => {
-      // Saves the object
-      const file = new FileRow(f.name, f.size, f.type, f);
+      const filelist = dlg.querySelector(".file-list");
+      filelist.insertAdjacentHTML("beforeend", html);
+      filelist.querySelector(".file-row:last-child").data = file;
+      filelist.querySelector(".file-row:last-child").metadata = {
+        title: file.name,
+        description: "",
+        author: "cristian.mocho",
+      };
+
       fileList.push(file);
-
-      // Creates the DOM node
-      container.find(".file-list").append(file.node);
-
-      // Prepare the node with events
-      file.node.on("optionselected", (e, data) => {
-        switch (data.option) {
-          case "btnUpload":
-            file.checkIfFileExist();
-            // file.uploadFile();
-            break;
-
-          case "btnCancel":
-            if (file.status !== "uploading") {
-              fileList = fileList.filter((f) => f !== file);
-              file.node.remove();
-            } else {
-              file.cancelUpload();
-            }
-
-            break;
-
-          case "btnPreview": {
-            const previewDialog = new Dialog({
-              title: "Preview file",
-              size: { width: "50%", height: "70%" },
-              icon: "eye",
-              buttons: [{ name: "btnClose", label: "Close", icon: "times", type: "secondary small" }],
-            });
-
-            if (file.type.search("image") >= 0) {
-              const previewObj = $('<div style="height: 100%; background-size: contain;">');
-              previewObj.css("background-image", `url(${URL.createObjectURL(file.data)})`);
-              previewDialog.node.find(".body").empty().append(previewObj);
-            } else if (file.type.search("pdf") >= 0) {
-              const previewObj = $('<object style="height: calc(100% - 2px); width: 100%">');
-              previewObj.attr("data", URL.createObjectURL(file.data));
-              previewDialog.node.find(".body").empty().append(previewObj);
-            } else {
-              previewDialog.node.find(".body").empty().append("<p>No preview available</p>");
-            }
-
-            previewDialog.node.find(".body").append("");
-            previewDialog.Show();
-            previewDialog.node.on("buttonclicked", (e, btn) => {
-              previewDialog.Close();
-            });
-
-            break;
-          }
-        }
-      });
     });
   }
 
@@ -88,7 +69,7 @@ function uploadMedia() {
 
   function handleDrop(e) {
     let dt = e.dataTransfer;
-    previewFiles(Array.from(dt.files));
+    listFiles(Array.from(dt.files));
   }
 
   function onDropAreaClick(e) {
@@ -98,6 +79,134 @@ function uploadMedia() {
   function preventDefaults(e) {
     e.preventDefault();
     e.stopPropagation();
+  }
+
+  // Auxiliary functions
+  function addErrorRibbon(row, message) {
+    row.classList.add("error");
+
+    const ribbon = document.createElement("div");
+    ribbon.innerHTML = `<i class="material-symbols">warning</i>`;
+    ribbon.classList.add("ribbon");
+    ribbon.title = message;
+
+    row.appendChild(ribbon);
+  }
+
+  function removeErrorRibbon(row) {
+    row.classList.remove("error");
+    const ribbon = row.querySelector(".ribbon");
+    if (ribbon) ribbon.remove();
+  }
+
+  function uploadFile(row) {
+    const file = row.data;
+    const fileProps = row.metadata;
+    const meter = row.querySelector("meter");
+
+    if (!fileProps) {
+      addErrorRibbon(row, 'File properties are not set!\nClick que "Properties" button, fill the form and try again.');
+      return;
+    }
+
+    const formData = new FormData();
+
+    formData.append("file", file);
+    formData.append("title", fileProps.title);
+    formData.append("description", fileProps.description);
+    formData.append("author", fileProps.author);
+
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", "/api/upload", true);
+
+    xhr.upload.onprogress = (e) => {
+      if (e.lengthComputable) {
+        const percentComplete = (e.loaded / e.total) * 100;
+        meter.value = percentComplete;
+      }
+    };
+
+    xhr.addEventListener("readystatechange", (e) => {
+      if (xhr.status === 200) {
+        meter.value = 100;
+        row.classList.add("success");
+
+        setTimeout(() => {
+          row.remove();
+        }, 3000);
+      } else {
+        meter.value = 0;
+        addErrorRibbon(row, `Error uploading file: ${file.name}. ${xhr.statusText}`);
+      }
+    });
+
+    xhr.send(formData);
+  }
+
+  function uploadAllFiles() {
+    fileList.forEach((file) => {
+      const row = [...dlg.querySelector(".file-list").children].find((r) => r.data === file);
+      uploadFile(row);
+    });
+  }
+
+  function enlargeImage(file) {
+    // Shows the image in a dialog
+    const dlg = showDialog({
+      icon: "image",
+      title: `Preview of ${file.name}`,
+      content: `<div class="preview-box"><img src="${URL.createObjectURL(file)}" alt="${file.name}" /></div>`,
+    });
+
+    dlg.addEventListener("dialogbuttonclick", dlg.close);
+  }
+
+  function fileProps(row) {
+    const { title, description, author } = row.metadata;
+
+    const dlg = showDialog({
+      icon: "more_horiz",
+      title: "File properties",
+      content: `
+        <div class="form-group">
+          <label for="title">Title:</label>
+          <input type="text" id="title" />
+        </div>
+        <div class="form-group">
+          <label for="description">Description:</label>
+          <textarea id="description"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="author">Author:</label>
+          <input type="text" id="author" />
+        </div>
+      `,
+      buttons: [
+        newButton({ label: "Save", icon: "save", name: "btnSave", type: "primary" }),
+        newButton({ label: "Cancel", icon: "cancel", name: "btnCancel", type: "normal" }),
+      ],
+    });
+
+    dlg.querySelector("#title").value = title;
+    dlg.querySelector("#description").value = description;
+    dlg.querySelector("#author").value = author;
+
+    dlg.addEventListener("dialogbuttonclick", (e) => {
+      const button = e.detail.button;
+      const name = button.name;
+
+      switch (name) {
+        case "btnSave":
+          row.metadata = {
+            title: dlg.querySelector("#title").value,
+            description: dlg.querySelector("#description").value,
+            author: dlg.querySelector("#author").value,
+          };
+          break;
+      }
+
+      dlg.close();
+    });
   }
 
   ["dragenter", "dragover", "dragleave", "drop"].forEach((e) => {
@@ -118,7 +227,7 @@ function uploadMedia() {
   fileInput.addEventListener(
     "change",
     (e) => {
-      previewFiles(Array.from(e.target.files));
+      listFiles(Array.from(e.target.files));
     },
     false
   );
@@ -128,16 +237,38 @@ function uploadMedia() {
     const name = button.name;
 
     switch (name) {
-      case "btnUploadAll":
+      case "btnClearAll":
+        dlg.querySelector(".file-list").innerHTML = "";
+        fileList = [];
         break;
-      case "btnConfirm":
+      case "btnUploadAll":
+        uploadAllFiles();
+        break;
+      case "btnCancel":
         dlg.close();
         break;
+      case "btnCancelFile": {
+        const file = button.closest(".file-row").data;
+        fileList = fileList.filter((f) => f !== file);
+        button.closest(".file-row").remove();
+        break;
+      }
+      case "btnPreviewFile":
+        enlargeImage(button.closest(".file-row").data);
+        break;
+      case "btnUploadFile":
+        uploadFile(button.closest(".file-row"));
+        break;
+      case "btnFileProps": {
+        fileProps(button.closest(".file-row"));
+        break;
+      }
     }
   });
 }
 
 function downloadMedia() {}
+
 function previewMedia() {}
 
 function deleteMedia() {
@@ -176,6 +307,7 @@ function deleteMedia() {
 }
 
 function viewAsGrid() {}
+
 function viewAsList() {}
 
 const cards = document.querySelectorAll("ez-card");
@@ -196,7 +328,7 @@ cards.forEach((card) => {
 
     switch (name) {
       case "btnUpload":
-        uploadMedia();
+        uploadMedia(button);
         break;
       case "btnDownload":
         break;

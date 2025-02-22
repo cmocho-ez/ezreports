@@ -10,16 +10,14 @@
 
 <template id="upload">
   <section class="upload-container">
-    <div class='drop-area'>
+    <div class="drop-area">
       <p>Drop your files onto this region, or Click here to upload using the dialog</p>
-      <form class='upload-form' encType='multipart/form-data'>
-        <input type='file' id='file' name='file' multiple style="display: none" />
+      <form class="upload-form" encType="multipart/form-data">
+        <input type="file" id="file" accept="image/*" multiple style="display: none" />
       </form>
     </div>
-    <button class="button btn-normal" name="btnUploadAll"><i class="material-symbols">upload</i>Upload all files</button>
-    <div class='file-list empty'>
-      <p>No files are being uploaded.</p>
-    </div>
+    <hr />
+    <div class="file-list"></div>
   </section>
 </template>
 

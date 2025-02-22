@@ -209,7 +209,8 @@ export const showDialog = ({
   if (icon) dlg.setAttribute("icon", icon);
 
   if (content) {
-    bodySlot.appendChild(content);
+    if (typeof content === "string") bodySlot.innerHTML = content;
+    else bodySlot.appendChild(content);
   }
 
   if (message) {
@@ -219,6 +220,7 @@ export const showDialog = ({
   }
 
   if (buttons.length > 0) {
+    footerSlot.innerHTML = "";
     buttons.forEach((btn) => {
       footerSlot.appendChild(btn);
     });
@@ -271,3 +273,25 @@ export const fillDropdown = ({ dropdown, data = [], valueField = "value", textFi
     dropdown.appendChild(option);
   });
 };
+
+/**
+ * Creates and returns a new button element with specified attributes and styling
+ * @param {Object} params - The button configuration parameters
+ * @param {string} params.label - The text label to display on the button
+ * @param {string} params.icon - The Material Icons name to use as button icon
+ * @param {string} params.name - The name attribute for the button element
+ * @param {string} params.type - The type/style variant of the button (appended to 'btn-' class)
+ * @returns {HTMLButtonElement} A configured button element
+ */
+export function newButton({ label, icon, name, type }) {
+  const button = document.createElement("button");
+  button.setAttribute("name", name);
+  button.classList.add("button");
+
+  if (type) button.classList.add(`btn-${type}`);
+
+  if (icon) button.innerHTML = `<i class="material-symbols">${icon}</i>${label}`;
+  else button.textContent = label;
+
+  return button;
+}

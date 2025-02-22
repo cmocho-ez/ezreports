@@ -1,4 +1,4 @@
-import { throwError } from "../utils/error.js";
+import { throwError } from "../../utils/error.js";
 
 function ViewerCtrl(req, res) {
   const config = res.app.get("config") ?? {};

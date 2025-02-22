@@ -201,26 +201,28 @@ export const showDialog = ({
 
   document.body.appendChild(dlg);
 
+  const bodySlot = dlg.querySelector("[slot=body]");
+  const footerSlot = dlg.querySelector("[slot=buttons]");
+
   dlg.setAttribute("type", type);
   dlg.setAttribute("title", title);
   if (icon) dlg.setAttribute("icon", icon);
 
   if (content) {
-    content.setAttribute("slot", "body");
-    dlg.appendChild(content);
+    if (typeof content === "string") bodySlot.innerHTML = content;
+    else bodySlot.appendChild(content);
   }
 
   if (message) {
     const messageElement = document.createElement("p");
     messageElement.innerHTML = message;
-    messageElement.setAttribute("slot", "body");
-    dlg.appendChild(messageElement);
+    bodySlot.appendChild(messageElement);
   }
 
   if (buttons.length > 0) {
+    footerSlot.innerHTML = "";
     buttons.forEach((btn) => {
-      btn.setAttribute("slot", "buttons");
-      dlg.appendChild(btn);
+      footerSlot.appendChild(btn);
     });
   }
 
@@ -229,6 +231,13 @@ export const showDialog = ({
 
   dlg.addEventListener("close", () => {
     dlg.remove();
+  });
+
+  dlg.addEventListener("click", (e) => {
+    const button = e.target.closest("button");
+    if (!button) return;
+
+    dlg.dispatchEvent(new CustomEvent("dialogbuttonclick", { detail: { button } }));
   });
 
   return dlg;
@@ -264,3 +273,25 @@ export const fillDropdown = ({ dropdown, data = [], valueField = "value", textFi
     dropdown.appendChild(option);
   });
 };
+
+/**
+ * Creates and returns a new button element with specified attributes and styling
+ * @param {Object} params - The button configuration parameters
+ * @param {string} params.label - The text label to display on the button
+ * @param {string} params.icon - The Material Icons name to use as button icon
+ * @param {string} params.name - The name attribute for the button element
+ * @param {string} params.type - The type/style variant of the button (appended to 'btn-' class)
+ * @returns {HTMLButtonElement} A configured button element
+ */
+export function newButton({ label, icon, name, type }) {
+  const button = document.createElement("button");
+  button.setAttribute("name", name);
+  button.classList.add("button");
+
+  if (type) button.classList.add(`btn-${type}`);
+
+  if (icon) button.innerHTML = `<i class="material-symbols">${icon}</i>${label}`;
+  else button.textContent = label;
+
+  return button;
+}

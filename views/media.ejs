@@ -4,16 +4,26 @@
       <% if (mediaLib.length === 0) { %>
       <p>No media uploaded yet.</p>
       <% } %>
-      <% mediaLib.forEach(thumb => { %>
-      <div class="thumbnail" data-author="<%= thumb.author %>" data-description="<%= thumb.description %>" data-link="/media/<%= thumb.path %>">
-        <span class="title"><%= thumb.title %></span>
-        <span class="date">Created on <%= thumb.date %></span>
-      </div>
-      <% }) %>
     </ez-card>
   </section>
 </main>
 
+<template id="upload">
+  <section class="upload-container">
+    <div class="drop-area">
+      <p>Drop your files onto this region, or Click here to upload using the dialog</p>
+      <form class="upload-form" encType="multipart/form-data">
+        <input type="file" id="file" accept="image/*" multiple style="display: none" />
+      </form>
+    </div>
+    <hr />
+    <div class="file-list"></div>
+  </section>
+</template>
+
+<script type="module">
+  const mediaLib = <%= JSON.stringify(mediaLib) %>;
+</script>
 
 <%- contentFor('scripts') %>
 <script type="module" src="/scripts/media.js" defer></script>

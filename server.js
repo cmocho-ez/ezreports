@@ -8,7 +8,9 @@ import { rateLimit } from "express-rate-limit";
 import { resolve } from "node:path";
 import { readFile } from "node:fs/promises";
 
-import routes from "./routes/web.js";
+import webRoutes from "./routes/web.js";
+import apiRoutes from "./routes/api.js";
+
 import { httpLogger } from "./middleware/logger.js";
 
 /**
@@ -47,6 +49,13 @@ export default class Server {
     const config = {
       version: packJsonParsed.version,
       env: process.env.NODE_ENV || "development",
+      database: {
+        host: process.env.DB_SERVER || "",
+        user: process.env.DB_USER || "",
+        password: process.env.DB_PASSWORD || "",
+        database: process.env.DB_DATABASE || "",
+        port: process.env.DB_PORT || 3306,
+      },
     };
 
     // User preferences. TODO: Load from a database.
@@ -126,7 +135,8 @@ export default class Server {
   #routes() {
     this.logger.info("🚦 Configuring routes...");
 
-    this.server.use(routes);
+    this.server.use("/", webRoutes);
+    this.server.use("api/", apiRoutes);
 
     // Error handling: 400, 403, 404, 429, 500
     this.server.use((err, req, res, next) => {

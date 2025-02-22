@@ -1,10 +1,10 @@
 import { Router } from "express";
 
-import HomeCtrl from "../controllers/home.js";
-import MediaCtrl from "../controllers/media.js";
-import EditorCtrl from "../controllers/editor.js";
-import ViewerCtrl from "../controllers/viewer.js";
-import TenantCtrl from "../controllers/tenant.js";
+import HomeCtrl from "../controllers/web/home.js";
+import MediaCtrl from "../controllers/web/media.js";
+import EditorCtrl from "../controllers/web/editor.js";
+import ViewerCtrl from "../controllers/web/viewer.js";
+import TenantCtrl from "../controllers/web/tenant.js";
 
 const router = Router();
 

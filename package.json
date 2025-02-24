@@ -1,6 +1,6 @@
 {
   "name": "ezreports",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "main": "main.js",
   "private": true,
   "type": "module",

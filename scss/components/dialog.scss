@@ -1,6 +1,3 @@
-@use "../material_symbols";
-@use "../mixins/scrollbar" as scrollbar;
-
 .ez-dialog[open] {
   box-sizing: border-box;
   padding: 0;
@@ -51,6 +48,15 @@
     padding: 8px;
     height: 100%;
     background-color: #fff;
+  }
+
+  footer {
+    background-color: var(--light-gray);
+    padding: 6px;
+    display: grid;
+    grid-auto-flow: column;
+    justify-content: end;
+    gap: 8px;
   }
 
   &::backdrop {

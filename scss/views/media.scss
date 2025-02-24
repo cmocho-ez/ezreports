@@ -19,6 +19,13 @@
   padding: 1em;
 }
 
+.file-props {
+  display: grid;
+  grid-auto-flow: row;
+  gap: 1em;
+  width: 300px;
+}
+
 .upload-container {
   display: grid;
   grid-template-rows: min-content min-content auto;

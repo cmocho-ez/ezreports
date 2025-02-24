@@ -2,7 +2,9 @@
 @use "typography";
 @use "palette";
 @use "material_symbols";
+
 @use "./components/buttons";
+@use "./components/dialog";
 
 @use "./mixins/scrollbar" as *;
 

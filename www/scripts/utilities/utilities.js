@@ -174,73 +174,131 @@ export const showAlert = ({ message, title, type, icon, closeable = false } = {}
  * @returns {HTMLDialogElement} The created dialog element.
  */
 export const showDialog = ({
-  message,
-  content = null,
+  content,
   buttons = [],
   title = "New Dialog",
   type = "info",
-  icon,
+  icon = "info",
   modal = true,
 }) => {
-  let dlg = null;
-
-  switch (type) {
-    case "warning":
-      dlg = document.querySelector("#warningDialog").cloneNode(true);
-      break;
-    case "error":
-      dlg = document.querySelector("#errorDialog").cloneNode(true);
-      break;
-    case "confirm":
-      dlg = document.querySelector("#confirmDialog").cloneNode(true);
-      break;
-    default:
-      dlg = document.querySelector("#infoDialog").cloneNode(true);
-      break;
-  }
-
-  document.body.appendChild(dlg);
-
-  const bodySlot = dlg.querySelector("[slot=body]");
-  const footerSlot = dlg.querySelector("[slot=buttons]");
-
-  dlg.setAttribute("type", type);
-  dlg.setAttribute("title", title);
-  if (icon) dlg.setAttribute("icon", icon);
+  let dlg = document.createElement("dialog");
+  dlg.classList.add("ez-dialog", type);
+  dlg.innerHTML = `
+    <header>
+      <i class="material-symbols">${icon}</i>
+      <span>${title}</span>
+    </header>
+    <main></main>
+    <footer></footer>`.trim();
 
   if (content) {
-    if (typeof content === "string") bodySlot.innerHTML = content;
-    else bodySlot.appendChild(content);
-  }
+    const body = dlg.querySelector("main");
 
-  if (message) {
-    const messageElement = document.createElement("p");
-    messageElement.innerHTML = message;
-    bodySlot.appendChild(messageElement);
+    if (typeof content === "string") {
+      body.innerHTML = content;
+    } else {
+      body.innerHTML = "";
+      body.appendChild(content);
+    }
   }
 
   if (buttons.length > 0) {
-    footerSlot.innerHTML = "";
+    const footer = dlg.querySelector("footer");
+
+    footer.innerHTML = "";
+
     buttons.forEach((btn) => {
-      footerSlot.appendChild(btn);
+      const button = document.createElement("button");
+      button.name = btn.name;
+      button.classList.add("button");
+
+      if (btn.type) button.classList.add(`btn-${btn.type}`);
+
+      if (btn.icon) button.innerHTML = `<i class="material-symbols">${btn.icon}</i>${btn.label}`;
+      else button.textContent = btn.label;
+
+      footer.appendChild(button);
     });
   }
-
-  if (modal) dlg.showModal();
-  else dlg.show();
-
-  dlg.addEventListener("close", () => {
-    dlg.remove();
-  });
 
   dlg.addEventListener("click", (e) => {
     const button = e.target.closest("button");
     if (!button) return;
 
-    dlg.dispatchEvent(new CustomEvent("dialogbuttonclick", { detail: { button } }));
+    const name = button.name;
+
+    dlg.dispatchEvent(
+      new CustomEvent("buttonclick", {
+        bubbles: false,
+        cancelable: true,
+        composed: true,
+        detail: {
+          button,
+          name,
+        },
+      })
+    );
   });
 
+  document.body.appendChild(dlg);
+
+  if (modal) {
+    dlg.showModal();
+    dlg.dispatchEvent(new CustomEvent("open"));
+  } else {
+    dlg.show();
+    dlg.dispatchEvent(new CustomEvent("open"));
+  }
+
+  dlg.onclose = () => {
+    dlg.remove();
+  };
+
   return dlg;
+};
+
+export const showConfirmDialog = ({ message, title = "Confirm", icon = "question_mark" }) => {
+  return showDialog({
+    content: `<p>${message}</p>`,
+    headtitle: title,
+    icon,
+    buttons: [
+      { name: "btnYes", text: "Yes", type: "primary" },
+      { name: "btnNo", text: "No", type: "normal" },
+    ],
+  });
+};
+
+export const showPromptDialog = ({ message, title = "Prompt", icon = "edit" }) => {
+  return showDialog({
+    content: `<p>${message}</p><input type="text" id="txtPrompt" />`,
+    headtitle: title,
+    icon,
+    buttons: [
+      { name: "btnOk", text: "Ok", type: "primary" },
+      { name: "btnCancel", text: "Cancel", type: "normal" },
+    ],
+  });
+};
+
+export const showWarningDialog = ({ message, title = "Warning", icon = "warning" }) => {
+  return showDialog({
+    content: `<p>${message}</p>`,
+    headtitle: title,
+    icon,
+    type: "warning",
+    buttons: [{ name: "btnOk", text: "Ok", type: "primary" }],
+  });
+};
+
+export const showErrorDialog = ({ message, title = "Error", icon = "error" }) => {
+  return showDialog({
+    content: `<p>${message}</p>`,
+    headtitle: title,
+    icon,
+    type: "error",
+    buttons: [{ name: "btnOk", text: "Ok", type: "primary" }],
+  });
 };
 
 /**
@@ -273,25 +331,3 @@ export const fillDropdown = ({ dropdown, data = [], valueField = "value", textFi
     dropdown.appendChild(option);
   });
 };
-
-/**
- * Creates and returns a new button element with specified attributes and styling
- * @param {Object} params - The button configuration parameters
- * @param {string} params.label - The text label to display on the button
- * @param {string} params.icon - The Material Icons name to use as button icon
- * @param {string} params.name - The name attribute for the button element
- * @param {string} params.type - The type/style variant of the button (appended to 'btn-' class)
- * @returns {HTMLButtonElement} A configured button element
- */
-export function newButton({ label, icon, name, type }) {
-  const button = document.createElement("button");
-  button.setAttribute("name", name);
-  button.classList.add("button");
-
-  if (type) button.classList.add(`btn-${type}`);
-
-  if (icon) button.innerHTML = `<i class="material-symbols">${icon}</i>${label}`;
-  else button.textContent = label;
-
-  return button;
-}

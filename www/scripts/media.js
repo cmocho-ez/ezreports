@@ -1,22 +1,16 @@
-import { showAlert, showDialog, newButton } from "./utilities/utilities.js";
+import { showAlert, showDialog } from "./utilities/utilities.js";
 
 // Toolbar
 function uploadMedia(button) {
-  button.disabled = true;
-
   const dlg = showDialog({
     icon: "upload",
-    title: "Upload media",
-    content: document.querySelector("#upload").content.cloneNode(true),
+    headtitle: "Upload media",
+    content: document.querySelector("#upload").innerHTML.trim(),
     buttons: [
-      newButton({ label: "Clear list", icon: "clear_all", name: "btnClearAll", type: "danger" }),
-      newButton({ label: "Upload all", icon: "upload", name: "btnUploadAll", type: "primary" }),
-      newButton({ label: "Cancel", icon: "cancel", name: "btnCancel", type: "normal" }),
+      { label: "Clear list", icon: "clear_all", name: "btnClearAll", type: "danger" },
+      { label: "Upload all", icon: "upload", name: "btnUploadAll", type: "primary" },
+      { label: "Cancel", icon: "cancel", name: "btnCancel", type: "normal" },
     ],
-  });
-
-  dlg.addEventListener("close", () => {
-    button.disabled = false;
   });
 
   const dropArea = dlg.querySelector(".drop-area");
@@ -133,7 +127,7 @@ function uploadMedia(button) {
 
         setTimeout(() => {
           row.remove();
-        }, 3000);
+        }, 5000);
       } else {
         meter.value = 0;
         addErrorRibbon(row, `Error uploading file: ${file.name}. ${xhr.statusText}`);
@@ -156,9 +150,10 @@ function uploadMedia(button) {
       icon: "image",
       title: `Preview of ${file.name}`,
       content: `<div class="preview-box"><img src="${URL.createObjectURL(file)}" alt="${file.name}" /></div>`,
+      buttons: [{ label: "Close", icon: "close", name: "btnClose", type: "normal" }],
     });
 
-    dlg.addEventListener("dialogbuttonclick", dlg.close);
+    dlg.addEventListener("buttonclick", dlg.close);
   }
 
   function fileProps(row) {
@@ -168,32 +163,29 @@ function uploadMedia(button) {
       icon: "more_horiz",
       title: "File properties",
       content: `
+      <section class="file-props">
         <div class="form-group">
           <label for="title">Title:</label>
-          <input type="text" id="title" />
+          <input type="text" id="title" value="${title}" />
         </div>
         <div class="form-group">
           <label for="description">Description:</label>
-          <textarea id="description"></textarea>
+          <textarea id="description">${description}</textarea>
         </div>
         <div class="form-group">
           <label for="author">Author:</label>
-          <input type="text" id="author" />
+          <input type="text" id="author" value="${author}" />
         </div>
+      </section>
       `,
       buttons: [
-        newButton({ label: "Save", icon: "save", name: "btnSave", type: "primary" }),
-        newButton({ label: "Cancel", icon: "cancel", name: "btnCancel", type: "normal" }),
+        { label: "Save", icon: "save", name: "btnSave", type: "primary" },
+        { label: "Cancel", icon: "cancel", name: "btnCancel", type: "normal" },
       ],
     });
 
-    dlg.querySelector("#title").value = title;
-    dlg.querySelector("#description").value = description;
-    dlg.querySelector("#author").value = author;
-
-    dlg.addEventListener("dialogbuttonclick", (e) => {
-      const button = e.detail.button;
-      const name = button.name;
+    dlg.addEventListener("buttonclick", (e) => {
+      const { name } = e.detail;
 
       switch (name) {
         case "btnSave":
@@ -232,7 +224,7 @@ function uploadMedia(button) {
     false
   );
 
-  dlg.addEventListener("dialogbuttonclick", (e) => {
+  dlg.addEventListener("buttonclick", (e) => {
     const button = e.detail.button;
     const name = button.name;
 

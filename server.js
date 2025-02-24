@@ -81,9 +81,10 @@ export default class Server {
     // Layout
     this.server.use(expressLayouts);
 
-    // Cache
+    // Main routes
     let cache = appcache.middleware;
-    this.server.use(cache("15 minutes"));
+    this.server.use("/api", apiRoutes);
+    this.server.use("/", cache("15 minutes"), webRoutes);
 
     // Rate limiter
     const limiter = rateLimit({
@@ -134,9 +135,6 @@ export default class Server {
 
   #routes() {
     this.logger.info("🚦 Configuring routes...");
-
-    this.server.use("/", webRoutes);
-    this.server.use("api/", apiRoutes);
 
     // Error handling: 400, 403, 404, 429, 500
     this.server.use((err, req, res, next) => {

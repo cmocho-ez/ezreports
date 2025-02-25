@@ -87,6 +87,19 @@ export const formatAsCurrency = (value, currency = "EUR") => {
 };
 
 /**
+ * Formats a numeric value as a string with thousands separators using US English locale.
+ * @param {number|null} value - The numeric value to format
+ * @returns {string} The formatted number string or "N/A" if the input is null
+ * @example
+ * formatAsNumber(1234.56) // returns "1,234.56"
+ * formatAsNumber(null) // returns "N/A"
+ */
+export const formatAsNumber = (value) => {
+  if (value == null) return "N/A";
+  return Intl.NumberFormat("en").format(value);
+};
+
+/**
  * Formats a date as a string in the format "YYYY-MM-DD".
  *
  * @param {Date|string} date - The date to format. Can be a Date object or a string in a date format that can be parsed by the Date constructor.

@@ -32,20 +32,16 @@ async function UploadCtrl(req, res) {
     }
 
     // Insert new files into the database
-    const result = await mysql.QueryTransaction(
-      `insert into media (name, original_name, description, file_path, title, mime_type, size, author)
-      values (?, ?, ?, ?, ?, ?, ?, ?)`,
-      [
-        newFile.name,
-        newFile.original_name,
-        newFile.description,
-        newFile.file_path,
-        newFile.title,
-        newFile.mime_type,
-        newFile.size,
-        newFile.author,
-      ]
-    );
+    const result = await mysql.QueryTransaction(`call sp_new_media (?,?,?,?,?,?,?,?);`, [
+      newFile.name,
+      newFile.original_name,
+      newFile.description,
+      newFile.file_path,
+      newFile.title,
+      newFile.mime_type,
+      newFile.size,
+      newFile.author,
+    ]);
 
     if (result.rowsAffected < 1) {
       await unlink(newFile.file_path);
@@ -54,7 +50,7 @@ async function UploadCtrl(req, res) {
 
     return res.status(200).json({
       message: "File uploaded successfully",
-      file: { ...newFile, file_path: undefined },
+      file: { ...result.rows[0][0] },
     });
   } catch (err) {
     await unlink(newFile.file_path);

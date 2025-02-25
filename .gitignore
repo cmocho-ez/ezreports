@@ -131,5 +131,5 @@ dist
 
 # Project specific auto-generated files
 www/styles/
-www/media/
 www/templates/
+media/

@@ -1,4 +1,4 @@
-import { fillDropdown, getMonthNames } from "../utilities/utilities.js";
+import { fillDropdown, getMonthNames } from "../utilities/utils.js";
 
 export class EzDateSelector extends HTMLElement {
   constructor() {

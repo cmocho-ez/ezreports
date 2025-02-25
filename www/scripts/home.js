@@ -1,4 +1,4 @@
-import { showAlert } from "./utilities/utilities.js";
+import { showAlert } from "./utilities/utils.js";
 
 // Toolbar
 const cards = document.querySelectorAll("ez-card");

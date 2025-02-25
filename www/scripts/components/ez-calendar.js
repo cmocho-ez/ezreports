@@ -1,4 +1,4 @@
-import { getWeekdayNames, compareDates } from "../utilities/utilities.js";
+import { getWeekdayNames, compareDates } from "../utilities/utils.js";
 
 export class EzCalendar extends HTMLElement {
   constructor() {

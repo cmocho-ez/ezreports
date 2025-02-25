@@ -276,8 +276,8 @@ export const showConfirmDialog = ({ message, title = "Confirm", icon = "question
     headtitle: title,
     icon,
     buttons: [
-      { name: "btnYes", text: "Yes", type: "primary" },
-      { name: "btnNo", text: "No", type: "normal" },
+      { name: "btnYes", label: "Yes", type: "primary" },
+      { name: "btnNo", label: "No", type: "normal" },
     ],
   });
 };

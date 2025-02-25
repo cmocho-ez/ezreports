@@ -84,6 +84,7 @@ export default class Server {
     // Main routes
     let cache = appcache.middleware;
     this.server.use("/api", apiRoutes);
+    this.server.use("/medialib", express.static(resolve(import.meta.dirname, "media")));
     this.server.use("/", cache("15 minutes"), webRoutes);
 
     // Rate limiter
@@ -94,7 +95,11 @@ export default class Server {
       legacyHeaders: false,
       skipFailedRequests: true,
       skip: (req, res) => {
-        const skip = req.path.startsWith("/style") || req.path.startsWith("/scripts") || req.path.startsWith("/assets");
+        const skip =
+          req.path.startsWith("/style") ||
+          req.path.startsWith("/scripts") ||
+          req.path.startsWith("/assets") ||
+          req.path.startsWith("/medialib");
         return skip;
       },
       handler: (req, res) => {

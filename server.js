@@ -1,6 +1,5 @@
 import express from "express";
 import helmet from "helmet";
-import appcache from "apicache-extra";
 import expressLayouts from "express-ejs-layouts";
 import chalk from "chalk";
 import pino from "pino";
@@ -31,8 +30,8 @@ export default class Server {
 
     (async () => {
       await this.#settings();
-      await this.#middlewares();
 
+      this.#middlewares();
       this.#routes();
     })();
 
@@ -72,20 +71,24 @@ export default class Server {
     this.server.set("layout", "layouts/private.ejs");
   }
 
-  async #middlewares() {
-    this.logger.info("🛠️ Loading middlewares...");
+  #middlewares() {
+    this.logger.info("🛠️  Loading middlewares...");
 
     // Logger
     this.server.use(httpLogger);
 
+    // Body parser
+    this.server.use(express.json({ limit: process.env.MAX_FILE_SIZE || "100MB" }));
+
+    this.server.use(
+      express.urlencoded({
+        extended: false,
+        limit: process.env.MAX_FILE_SIZE || "100MB",
+      })
+    );
+
     // Layout
     this.server.use(expressLayouts);
-
-    // Main routes
-    let cache = appcache.middleware;
-    this.server.use("/api", apiRoutes);
-    this.server.use("/medialib", express.static(resolve(import.meta.dirname, "media")));
-    this.server.use("/", cache("15 minutes"), webRoutes);
 
     // Rate limiter
     const limiter = rateLimit({
@@ -96,6 +99,7 @@ export default class Server {
       skipFailedRequests: true,
       skip: (req, res) => {
         const skip =
+          req.path.startsWith("/api") ||
           req.path.startsWith("/style") ||
           req.path.startsWith("/scripts") ||
           req.path.startsWith("/assets") ||
@@ -117,19 +121,6 @@ export default class Server {
 
     this.server.use(limiter);
 
-    // Static files
-    this.server.use(express.static(resolve(import.meta.dirname, "www")));
-
-    // Body parser
-    this.server.use(express.json({ limit: process.env.MAX_FILE_SIZE || "100MB" }));
-
-    this.server.use(
-      express.urlencoded({
-        extended: false,
-        limit: process.env.MAX_FILE_SIZE || "100MB",
-      })
-    );
-
     // Security
     this.server.use(
       helmet({
@@ -140,6 +131,14 @@ export default class Server {
 
   #routes() {
     this.logger.info("🚦 Configuring routes...");
+
+    // Main routes
+    this.server.use("/", webRoutes);
+    this.server.use("/api", apiRoutes);
+
+    // Static files
+    this.server.use(express.static(resolve(import.meta.dirname, "www")));
+    this.server.use("/medialib", express.static(resolve(import.meta.dirname, "media")));
 
     // Error handling: 400, 403, 404, 429, 500
     this.server.use((err, req, res, next) => {

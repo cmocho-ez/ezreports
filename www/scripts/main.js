@@ -2,14 +2,10 @@ import { EzAppLogo } from "./components/ez-applogo.js";
 import { EzCompanyLogo } from "./components/ez-companylogo.js";
 import { EzUserInfo } from "./components/ez-userinfo.js";
 import { EzBadge } from "./components/ez-badge.js";
-import { EzDateSelector } from "./components/ez-dateselector.js";
-import { EzCalendar } from "./components/ez-calendar.js";
 import { EzAlert } from "./components/ez-alert.js";
 import { EzCard } from "./components/ez-card.js";
-import { EzCopyButton } from "./components/ez-copybutton.js";
 import { EzSwitch } from "./components/ez-switch.js";
 import { EzFloatingMenu } from "./components/ez-floatingmenu.js";
-import { EzTable } from "./components/ez-table.js";
 
 (function () {
   // Registering custom elements
@@ -17,14 +13,10 @@ import { EzTable } from "./components/ez-table.js";
   customElements.define("ez-companylogo", EzCompanyLogo);
   customElements.define("ez-userinfo", EzUserInfo);
   customElements.define("ez-badge", EzBadge);
-  customElements.define("ez-dateselector", EzDateSelector);
-  customElements.define("ez-calendar", EzCalendar);
   customElements.define("ez-alert", EzAlert);
   customElements.define("ez-card", EzCard);
-  customElements.define("ez-copybutton", EzCopyButton);
   customElements.define("ez-switch", EzSwitch);
   customElements.define("ez-floatingmenu", EzFloatingMenu);
-  customElements.define("ez-table", EzTable);
 
   // Handling user events
   const mnu = document.createElement("ez-floatingmenu");

@@ -1,9 +1,8 @@
 <main>
   <section class="cards">
     <ez-card header="Media Library">
-      <% if (mediaLib.length === 0) { %>
-      <p>No media uploaded yet.</p>
-      <% } %>
+      <div class="media-grid"></div>
+      <div class="media-list" style="display: none"></div>
     </ez-card>
   </section>
 </main>
@@ -21,11 +20,10 @@
   </section>
 </template>
 
-<script type="module">
-  const mediaLib = <%= JSON.stringify(mediaLib) %>;
-</script>
-
 <%- contentFor('scripts') %>
+<script>
+  const mediaLib = <%- JSON.stringify(mediaLib) %>;
+</script>
 <script type="module" src="/scripts/media.js" defer></script>
 
 <%- contentFor('styles') %>

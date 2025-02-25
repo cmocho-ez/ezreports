@@ -1,7 +1,74 @@
-import { showAlert, showDialog } from "./utilities/utilities.js";
+import { showAlert, showDialog } from "./utilities/utils.js";
+import Bytes from "./utilities/bytes.js";
+
+let currentView = "grid";
+
+function viewAsGrid() {
+  currentView = "grid";
+
+  const bytes = new Bytes();
+
+  document.querySelector(".media-list").style.display = "none";
+  const container = document.querySelector(".media-grid");
+  container.style.display = "grid";
+  container.innerHTML = "";
+
+  if (mediaLib.length === 0) {
+    container.innerHTML = `<p>No media uploaded yet.</p>`;
+    return;
+  }
+
+  mediaLib.forEach(async (media) => {
+    let thumb = "";
+
+    // If image is SVG, encode it as Base64
+    if (media.base64) {
+      thumb = `<img class="thumb-image" src="${media.base64}" />`;
+    } else {
+      thumb = `<img class="thumb-image" src="/medialib/${media.name}" />`;
+    }
+
+    thumb += `<div class="thumb-info">
+      <span class="thumb-title">${media.title}</span>
+      <span class="thumb-author">Author: ${media.author}</span>
+      <span class="thumb-size">${bytes.format(Number(media.size))}</span>
+    </div>`.trim();
+
+    const thumbContainer = document.createElement("div");
+    thumbContainer.classList.add("thumb");
+    thumbContainer.innerHTML = thumb;
+    thumbContainer.title = media.title;
+
+    thumbContainer.metadata = media;
+
+    container.appendChild(thumbContainer);
+  });
+}
+
+function viewAsList() {
+  currentView = "list";
+
+  document.querySelector(".media-grid").style.display = "none";
+  const container = document.querySelector(".media-list");
+  container.style.display = "grid";
+  container.innerHTML = "";
+
+  if (mediaLib.length === 0) {
+    container.innerHTML = `<p>No media uploaded yet.</p>`;
+    return;
+  }
+}
+
+function refreshView() {
+  if (currentView === "grid") {
+    viewAsGrid();
+  } else {
+    viewAsList();
+  }
+}
 
 // Toolbar
-function uploadMedia(button) {
+function uploadMedia() {
   const dlg = showDialog({
     icon: "upload",
     headtitle: "Upload media",
@@ -33,7 +100,7 @@ function uploadMedia(button) {
             <button class="button btn-icon" name="btnFileProps" title="Properties..."><i class="material-symbols">more_horiz</i></button>
             <button class="button btn-icon" name="btnUploadFile" title="Upload"><i class="material-symbols">upload</i></button>
             <button class="button btn-icon" name="btnCancelFile" title="Cancel"><i class="material-symbols">delete</i></button>
-            <button class="button btn-icon" name="btnPreviewFile" title="Enlarge"><i class="material-symbols">fullscreen</i></button>
+            <button class="button btn-icon" name="btnPreviewFile" title="Preview"><i class="material-symbols">fullscreen</i></button>
           </div>
           <meter value="0" max="100" optimal="100"></meter>
         </div>
@@ -98,62 +165,65 @@ function uploadMedia(button) {
     const fileProps = row.metadata;
     const meter = row.querySelector("meter");
 
-    if (!fileProps) {
-      addErrorRibbon(row, 'File properties are not set!\nClick que "Properties" button, fill the form and try again.');
-      return;
-    }
-
-    const formData = new FormData();
-
-    formData.append("file", file);
-    formData.append("title", fileProps.title);
-    formData.append("description", fileProps.description);
-    formData.append("author", fileProps.author);
-
-    const xhr = new XMLHttpRequest();
-    xhr.open("POST", "/api/upload", true);
-
-    xhr.upload.onprogress = (e) => {
-      if (e.lengthComputable) {
-        const percentComplete = (e.loaded / e.total) * 100;
-        meter.value = percentComplete;
+    return new Promise((resolve, reject) => {
+      if (!fileProps) {
+        return reject("File properties are not set");
       }
-    };
 
-    xhr.addEventListener("readystatechange", (e) => {
-      if (xhr.status === 200) {
-        meter.value = 100;
-        row.classList.add("success");
+      const formData = new FormData();
 
-        setTimeout(() => {
-          row.remove();
-        }, 5000);
-      } else {
-        meter.value = 0;
-        addErrorRibbon(row, `Error uploading file: ${file.name}. ${xhr.statusText}`);
-      }
+      formData.append("file", file);
+      formData.append("title", fileProps.title);
+      formData.append("description", fileProps.description);
+      formData.append("author", fileProps.author);
+
+      const xhr = new XMLHttpRequest();
+      xhr.open("POST", "/api/upload", true);
+
+      xhr.upload.onprogress = (e) => {
+        if (e.lengthComputable) {
+          const percentComplete = (e.loaded / e.total) * 100;
+          meter.value = percentComplete;
+        }
+      };
+
+      xhr.addEventListener("readystatechange", (e) => {
+        if (xhr.status === 200) {
+          if (xhr.readyState === 4) {
+            meter.value = 100;
+            row.classList.add("success");
+
+            resolve(JSON.parse(xhr.responseText || "{}"));
+
+            fileList = fileList.filter((f) => f !== file);
+
+            setTimeout(() => {
+              row.remove();
+            }, 5000);
+          }
+        } else {
+          meter.value = 0;
+          reject(`Error uploading file: ${file.name}. ${xhr.statusText}`);
+        }
+      });
+
+      xhr.send(formData);
     });
-
-    xhr.send(formData);
   }
 
-  function uploadAllFiles() {
-    fileList.forEach((file) => {
+  async function uploadAllFiles() {
+    for await (const file of fileList) {
       const row = [...dlg.querySelector(".file-list").children].find((r) => r.data === file);
-      uploadFile(row);
-    });
-  }
 
-  function enlargeImage(file) {
-    // Shows the image in a dialog
-    const dlg = showDialog({
-      icon: "image",
-      title: `Preview of ${file.name}`,
-      content: `<div class="preview-box"><img src="${URL.createObjectURL(file)}" alt="${file.name}" /></div>`,
-      buttons: [{ label: "Close", icon: "close", name: "btnClose", type: "normal" }],
-    });
-
-    dlg.addEventListener("buttonclick", dlg.close);
+      try {
+        const resp = await uploadFile(row);
+        mediaLib.push(resp.file);
+        refreshView();
+      } catch (err) {
+        addErrorRibbon(row, err.message || "An error occurred while uploading the file. Please try again later.");
+        console.log(err);
+      }
+    }
   }
 
   function fileProps(row) {
@@ -224,7 +294,7 @@ function uploadMedia(button) {
     false
   );
 
-  dlg.addEventListener("buttonclick", (e) => {
+  dlg.addEventListener("buttonclick", async (e) => {
     const button = e.detail.button;
     const name = button.name;
 
@@ -246,11 +316,15 @@ function uploadMedia(button) {
         break;
       }
       case "btnPreviewFile":
-        enlargeImage(button.closest(".file-row").data);
+        previewMedia(button.closest(".file-row").data);
         break;
-      case "btnUploadFile":
-        uploadFile(button.closest(".file-row"));
+      case "btnUploadFile": {
+        const resp = await uploadFile(button.closest(".file-row"));
+        mediaLib.push(resp.file);
+        refreshView();
+
         break;
+      }
       case "btnFileProps": {
         fileProps(button.closest(".file-row"));
         break;
@@ -261,9 +335,39 @@ function uploadMedia(button) {
 
 function downloadMedia() {}
 
-function previewMedia() {}
+function selectAll() {
+  const thumbs = document.querySelectorAll(".thumb");
+  thumbs.forEach((thumb) => thumb.classList.toggle("selected"));
+}
 
-function deleteMedia() {
+function previewMedia(file) {
+  if (!file) return;
+
+  let prev;
+
+  if (file instanceof File) {
+    prev = {
+      title: file.name,
+      url: URL.createObjectURL(file),
+    };
+  } else {
+    prev = {
+      title: file.original_name,
+      url: file.base64 ?? "/medialib/" + file.name,
+    };
+  }
+
+  const dlg = showDialog({
+    icon: "image",
+    title: `Preview of ${prev.title}`,
+    content: `<div class="preview-box"><img src="${prev.url}" alt="${prev.title}" /></div>`,
+    buttons: [{ label: "Close", icon: "close", name: "btnClose", type: "normal" }],
+  });
+
+  dlg.addEventListener("buttonclick", dlg.close);
+}
+
+function deleteSelected() {
   const dlg = showDialog({
     icon: "delete",
     title: "Delete media",
@@ -298,45 +402,67 @@ function deleteMedia() {
   });
 }
 
-function viewAsGrid() {}
+const card = document.querySelector("ez-card");
+card.addToolbarButtons([
+  { label: "Upload...", icon: "upload", name: "btnUpload" },
+  { label: "Download selected", icon: "download", name: "btnDownload" },
+  { type: "divider" },
+  { label: "Select/Deselect all", icon: "checklist", name: "btnSelAll" },
+  { label: "Preview selected", icon: "preview", name: "btnView" },
+  { label: "Delete selected", icon: "delete", name: "btnDelete" },
+  { type: "divider" },
+  { label: "View as grid", icon: "grid_view", name: "btnViewGrid" },
+  { label: "View as list", icon: "view_list", name: "btnViewList" },
+]);
 
-function viewAsList() {}
+card.addEventListener("toolbarbuttonclick", async (e) => {
+  const button = e.detail.button;
+  const name = button.name;
 
-const cards = document.querySelectorAll("ez-card");
-cards.forEach((card) => {
-  card.addToolbarButtons([
-    { label: "Upload...", icon: "upload", name: "btnUpload" },
-    { label: "Download selected", icon: "download", name: "btnDownload" },
-    { label: "Preview selected", icon: "preview", name: "btnView" },
-    { label: "Delete selected", icon: "delete", name: "btnDelete" },
-    { type: "divider" },
-    { label: "View as grid", icon: "grid_view", name: "btnViewGrid" },
-    { label: "View as list", icon: "view_list", name: "btnViewList" },
-  ]);
-
-  card.addEventListener("toolbarbuttonclick", async (e) => {
-    const button = e.detail.button;
-    const name = button.name;
-
-    switch (name) {
-      case "btnUpload":
-        uploadMedia(button);
-        break;
-      case "btnDownload":
-        break;
-      case "btnView":
-        break;
-      case "btnDelete":
-        deleteMedia();
-        break;
-      default:
-        showAlert({
-          message: `toolbar button clicked: ${name}`,
-          title: "Button clicked",
-          type: "success",
-          icon: "check",
-        });
-        break;
-    }
-  });
+  switch (name) {
+    case "btnUpload":
+      uploadMedia(button);
+      break;
+    case "btnDownload":
+      break;
+    case "btnSelAll":
+      selectAll();
+      break;
+    case "btnView":
+      break;
+    case "btnDelete":
+      deleteSelected();
+      break;
+    default:
+      showAlert({
+        message: `toolbar button clicked: ${name}`,
+        title: "Button clicked",
+        type: "success",
+        icon: "check",
+      });
+      break;
+  }
 });
+
+card.querySelector(".media-grid").addEventListener("click", (e) => {
+  const thumb = e.target.closest(".thumb");
+  if (!thumb) return;
+
+  thumb.classList.toggle("selected");
+});
+
+card.querySelector(".media-list").addEventListener("click", (e) => {
+  const item = e.target.closest(".media-item");
+  if (!item) return;
+
+  item.classList.toggle("selected");
+});
+
+card.querySelector(".media-grid").addEventListener("dblclick", (e) => {
+  const thumb = e.target.closest(".thumb");
+  if (!thumb) return;
+
+  previewMedia(thumb.metadata);
+});
+
+viewAsGrid();

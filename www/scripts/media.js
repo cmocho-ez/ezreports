@@ -1,7 +1,8 @@
-import { showAlert, showDialog } from "./utilities/utils.js";
+import { showAlert, showConfirmDialog, showDialog } from "./utilities/utils.js";
 import Bytes from "./utilities/bytes.js";
 
 let currentView = "grid";
+let thumbSelected = [];
 
 function viewAsGrid() {
   currentView = "grid";
@@ -338,6 +339,8 @@ function downloadMedia() {}
 function selectAll() {
   const thumbs = document.querySelectorAll(".thumb");
   thumbs.forEach((thumb) => thumb.classList.toggle("selected"));
+
+  thumbSelected = [...thumbs].filter((thumb) => thumb.classList.contains("selected"));
 }
 
 function previewMedia(file) {
@@ -368,36 +371,60 @@ function previewMedia(file) {
 }
 
 function deleteSelected() {
-  const dlg = showDialog({
+  const dlg = showConfirmDialog({
     icon: "delete",
     title: "Delete media",
-    message: "Are you sure you want to delete the selected media?",
-    type: "confirm",
+    message: "Are you sure you want to delete the selected media? This action cannot be undone.",
   });
 
-  dlg.addEventListener("dialogbuttonclick", (e) => {
+  dlg.addEventListener("buttonclick", async (e) => {
     const button = e.detail.button;
     const name = button.name;
 
     dlg.close();
 
     switch (name) {
-      case "btnConfirm":
+      case "btnYes": {
+        const errors = [];
+
+        for await (const thumb of thumbSelected) {
+          const uid = thumb.metadata.uid;
+          const result = await fetch("/api/deletemedia", {
+            method: "DELETE",
+            body: JSON.stringify({ uid }),
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+
+          if (result.status !== 200) {
+            errors.push(thumb.metadata);
+          } else {
+            mediaLib = mediaLib.filter((file) => file.uid !== uid);
+          }
+        }
+
+        if (errors.length > 0) {
+          showAlert({
+            message: `Some media could not be deleted: ${errors.map((e) => e.original_name).join(", ")}`,
+            title: "Media not deleted",
+            type: "error",
+            icon: "warning",
+          });
+          return;
+        }
+
         showAlert({
           message: "Media deleted",
           title: "Media deleted",
           type: "success",
           icon: "check",
         });
+
+        refreshView();
+
         break;
-      case "btnCancel":
-        showAlert({
-          message: "Media not deleted",
-          title: "Media not deleted",
-          type: "info",
-          icon: "info",
-        });
-        break;
+      }
     }
   });
 }
@@ -408,7 +435,7 @@ card.addToolbarButtons([
   { label: "Download selected", icon: "download", name: "btnDownload" },
   { type: "divider" },
   { label: "Select/Deselect all", icon: "checklist", name: "btnSelAll" },
-  { label: "Preview selected", icon: "preview", name: "btnView" },
+  { label: "Preview selected", icon: "preview", name: "btnPreview" },
   { label: "Delete selected", icon: "delete", name: "btnDelete" },
   { type: "divider" },
   { label: "View as grid", icon: "grid_view", name: "btnViewGrid" },
@@ -428,7 +455,8 @@ card.addEventListener("toolbarbuttonclick", async (e) => {
     case "btnSelAll":
       selectAll();
       break;
-    case "btnView":
+    case "btnPreview":
+      previewMedia(thumbSelected[0].metadata);
       break;
     case "btnDelete":
       deleteSelected();
@@ -449,6 +477,8 @@ card.querySelector(".media-grid").addEventListener("click", (e) => {
   if (!thumb) return;
 
   thumb.classList.toggle("selected");
+
+  thumbSelected = [...card.querySelectorAll(".thumb.selected")];
 });
 
 card.querySelector(".media-list").addEventListener("click", (e) => {
@@ -456,11 +486,15 @@ card.querySelector(".media-list").addEventListener("click", (e) => {
   if (!item) return;
 
   item.classList.toggle("selected");
+
+  thumbSelected = [...card.querySelectorAll(".thumb.selected")];
 });
 
 card.querySelector(".media-grid").addEventListener("dblclick", (e) => {
   const thumb = e.target.closest(".thumb");
   if (!thumb) return;
+
+  thumb.classList.toggle("selected");
 
   previewMedia(thumb.metadata);
 });

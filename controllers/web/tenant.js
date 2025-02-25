@@ -1,6 +1,5 @@
 function TenantCtrl(req, res) {
-  const config = res.app.get("config") ?? {};
-  const userPrefs = res.app.get("userPrefs") ?? {};
+  const { config, userPrefs } = res.locals;
 
   // Loading tenant information
   const tenant = {};

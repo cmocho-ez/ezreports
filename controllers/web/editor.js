@@ -1,7 +1,5 @@
 function EditorCtrl(req, res) {
-  const config = res.app.get("config") ?? {};
-  const userPrefs = res.app.get("userPrefs") ?? {};
-
+  const { config, userPrefs } = res.locals;
   const { uid } = req.params;
 
   if (!uid) {

@@ -5,22 +5,13 @@ import MySQL from "../../utils/mysql.js";
 
 async function UploadCtrl(req, res) {
   const file = req.file;
-
-  if (!file) {
-    return throwError(400, "No file uploaded");
-  }
-
-  return res.status(200).json({
-    message: "File uploaded successfully",
-    file: file.filename,
-  });
-
   const { title, description, author } = req.body;
+
   const newFile = {
     name: file.filename,
     original_name: file.originalname,
     description,
-    file_path: join(resolve(process.env.UPLOAD_FILES_DEST), file.filename),
+    file_path: resolve(join(process.cwd(), process.env.UPLOAD_FILES_DEST, file.filename)),
     title,
     mime_type: file.mimetype,
     size: file.size,
@@ -31,9 +22,13 @@ async function UploadCtrl(req, res) {
     const config = res.app.get("config") ?? {};
     const mysql = new MySQL(config.database);
 
-    if (!title || !description || !author) {
+    if (!file) {
+      return throwError(400, "No file uploaded");
+    }
+
+    if (!title || description == null || !author) {
       await unlink(newFile.file_path);
-      return throwError(400, "Title, description, and author are required");
+      return throwError(400, `You're missing some required attributes for file ${file.originalname}`);
     }
 
     // Insert new files into the database
@@ -59,7 +54,7 @@ async function UploadCtrl(req, res) {
 
     return res.status(200).json({
       message: "File uploaded successfully",
-      file: newFile,
+      file: { ...newFile, file_path: undefined },
     });
   } catch (err) {
     await unlink(newFile.file_path);
